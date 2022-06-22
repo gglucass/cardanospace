@@ -2,7 +2,10 @@
 
 This repository contains everything to create a mirror of https://cardanospace.com
 
-To get a mirror running, you will need to deploy 3 separate repositories. 
+To get a mirror running, you will need to deploy 3 separate repositories:
+1. A frontend that shows CardanoSpace content
+2. A space creator that (a) gets all information from the blockchain and then (b) prepares a giant image of the entirety of CardanoSpace
+3. An uploader that helps people submit new data to the blockchain (optional)
 
 ## #1 Frontend
 
