@@ -1,0 +1,12 @@
+source 'https://rubygems.org'
+
+# gem 'pg'
+gem 'activerecord'
+gem 'curb'
+gem 'ruby-vips'
+gem 'aws-sdk-s3', '~> 1'
+gem 'rubyzip'
+gem 'rake'
+gem 'sqlite3'
+gem 'sinatra-activerecord'
+gem 'racksh'

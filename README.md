@@ -15,3 +15,21 @@ To get a mirror running, you will need to deploy 3 separate repositories:
 4. Drop the frontend folder in the interface
 5. Wait for it to deploy
 6. Visit your newly deployed CardanoSpace frontend (example: https://profound-caramel-c227a8.netlify.app/ )
+
+## #2 Backend
+
+1. Configure the BLOCKFROST_API and BLOCKFROST_SUBDOMAIN in `app.rb`
+2. Configure the AWS_KEYS in `app.rb`
+3. Run `bundle`
+4. Run `bundle exec db:create`
+5. Run `bundle exec db:migrate`
+6. Run `bundle exec db:seed`
+7. Run `something that pulls data`
+8. Run `bundle exec racksh` to start a never ending loop that updates your CardanoSpace mirror
+9. Check out your newly mirrored CardanoSpace in your bucket
+
+
+## #3 putting it all together
+
+1. Take the link of the bucket and put it in the frontend file
+2. Your CardanoSpace frontend now runs on a mirror of the data on the Cardano database 🥳!

@@ -1,0 +1,8 @@
+# database.yaml
+development:
+  adapter: 'sqlite3'
+  database: 'db/test.db'
+
+production:
+  adapter: 'sqlite3'
+  database: 'db/production.db'  
