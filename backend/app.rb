@@ -1,46 +1,43 @@
 require './src/models'
+require 'curb'
+
 args = Hash[ ARGV.join(' ').scan(/--?([^=\s]+)(?:=(\S+))?/) ]
 UPDATING = (args['updating'] == "true" || false)
 
 PRODUCTION = true
 BLOCKFROST_API = PRODUCTION == true ? "" : ""
 BLOCKFROST_SUBDOMAIN = PRODUCTION == true ? "cardano-mainnet" : "cardano-testnet"
+POLICY_ID = "e3ac0dd93edbe6bafec38fb120cf7c3e223686a97261008c2bfe0d6d"
 
 class App
 
   puts "launching the cardanospace app v1"
 
-  while UPDATING do
-    puts "we're checking for updates"
-    begin
-      detect_new_metadata_transactions
-      puts "updates processed, going to sleep"
-      sleep(30)
-    rescue
-      puts "something failed in the async metadata loop, trying to reconnect to the database"
-      connect
-      sleep(30)
-    end
-  end
-
-  def metadata_txs
+  def self.metadata_txs
     http = Curl.get("https://#{BLOCKFROST_SUBDOMAIN}.blockfrost.io/api/v0/metadata/txs/labels/909?order=desc&count=5") do |http|
       http.headers['project_id'] = BLOCKFROST_API
     end
     return JSON.parse(http.body)
   end
 
-  def detect_new_metadata_transactions
+  def self.transaction_utxos(transaction_id)
+    http = Curl.get("https://#{BLOCKFROST_SUBDOMAIN}.blockfrost.io/api/v0/txs/#{transaction_id}/utxos") do |http|
+      http.headers['project_id'] = BLOCKFROST_API
+    end
+    return JSON.parse(http.body)
+  end
+
+  def self.detect_new_metadata_transactions
     last_transactions = metadata_txs
-    last_transactions.keep_if { |tx| Metadata.where(destination: nil).where(transaction_id: tx["tx_hash"]).empty? }
+    last_transactions.keep_if { |tx| Metadata.where(transaction_id: tx["tx_hash"]).empty? }
     last_transactions.each do |transaction|
       puts "processing new upload with tx id: " + transaction["tx_hash"]
       begin
         new_img = process_sent_metadata(transaction)
         if new_img then
-          Metadata.create(price: Metadata.last.id+1, data: "{}", transaction_id: transaction["tx_hash"])
+          Metadata.create(transaction_id: transaction["tx_hash"])
         else
-          Metadata.create(price: Metadata.last.id+1, data: "{}", transaction_id: transaction["tx_hash"])
+          Metadata.create(transaction_id: transaction["tx_hash"])
         end
       rescue
         puts "something went wrong processing sent metadata"
@@ -48,7 +45,7 @@ class App
     end
   end
 
-  def process_sent_metadata(transaction)
+  def self.process_sent_metadata(transaction)
     begin
       if transaction && transaction["json_metadata"].any? then
         puts "starting to process blocklink metadata for #{transaction["tx_hash"]}"
@@ -74,13 +71,14 @@ class App
     end
   end
 
-  def process_block_metadata(transaction)
+  def self.process_block_metadata(transaction)
     begin
       img_changed = false
       transaction["json_metadata"]["CardanoSpaces"].each do |idxn|
         idxn = idxn.tr('-', '').gsub("100", "00").upcase
         idx = idxn.length > 4 ? idxn.split(/(?=(\d{3}|\d{1}))/)[0..1].join('-') : idxn.split(/(?=(\d{2}|\d{1}))/)[0..1].join('-')
         square = Square.find_by_idx(idx)
+        puts ("updating square #{idx}")
         img_url = transaction["json_metadata"]["img"].include?("ipfs://") ? transaction["json_metadata"]["img"] : ("ipfs://" + transaction["json_metadata"]["img"])
         square.img   = img_url.gsub(" ", "") || square.img
         square.url   = transaction["json_metadata"]["url"] || square.url
@@ -103,4 +101,16 @@ class App
     end
   end
 
+  while UPDATING do
+    puts "we're checking for updates"
+    begin
+      detect_new_metadata_transactions
+      puts "updates processed, going to sleep"
+      sleep(30)
+    rescue
+      puts "something failed in the async metadata loop, trying to reconnect to the database"
+      connect
+      sleep(30)
+    end
+  end
 end

@@ -37,6 +37,7 @@ GEM
     minitest (5.14.4)
     mustermann (1.1.1)
       ruby2_keywords (~> 0.0.1)
+    ox (2.14.11)
     rack (2.2.3.1)
     rack-protection (2.2.0)
       rack
@@ -71,6 +72,7 @@ DEPENDENCIES
   activerecord
   aws-sdk-s3 (~> 1)
   curb
+  ox
   racksh
   rake
   ruby-vips

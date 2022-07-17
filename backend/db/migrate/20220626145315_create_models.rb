@@ -9,13 +9,15 @@ class CreateModels < ActiveRecord::Migration[6.1]
       t.integer :y
       t.string :traits, array: true
       t.string :the_type
+      t.string :audio
+      t.string :tdrs
 
       t.timestamps
     end
 
     add_index :squares, :idx, unique: true
 
-    create_table :metadatas do |t|
+    create_table :metadata do |t|
       t.string :transaction_id
     end
   end
