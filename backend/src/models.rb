@@ -5,6 +5,7 @@ require "sinatra/activerecord"
 class Square < ActiveRecord::Base
   self.table_name = "squares"
   self.primary_key = "id"
+  serialize :traits, Array
 end
 
 class Metadata < ActiveRecord::Base

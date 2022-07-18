@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(version: 2022_06_26_145315) do
     t.string "url"
     t.integer "x"
     t.integer "y"
-    t.string "traits"
+    t.text "traits"
     t.string "the_type"
     t.string "audio"
     t.string "tdrs"

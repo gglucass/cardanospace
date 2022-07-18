@@ -7,7 +7,7 @@ class CreateModels < ActiveRecord::Migration[6.1]
       t.string :url
       t.integer :x
       t.integer :y
-      t.string :traits, array: true
+      t.text :traits, array: true
       t.string :the_type
       t.string :audio
       t.string :tdrs
