@@ -220,7 +220,7 @@ class Creator
     space = create_space_image(drawings, skiplist)
     puts "space image created"
 
-    if true then
+    if false then
       puts "resizing space"
       smaller_space = space.resize(0.25)
       puts "saving smaller space"

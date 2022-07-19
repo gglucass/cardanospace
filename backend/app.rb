@@ -7,8 +7,8 @@ BLOCKFROST_SUBDOMAIN = "cardano-mainnet"
 BLOCKFROST_API = "" 
 AWS_ACCESS_KEY_ID=""
 AWS_REGION="us-east-1"
-AWS_SECRET_ACCESS_KEY=""
-BUCKET_NAME=""
+AWS_SECRET_ACCESS_KEY="nGeQBqRhOW3WhzBaWNCsAW0Ca89/hcYCBqEfRM93"
+BUCKET_NAME="mycspacebucket"
 
 require './src/models'
 require './src/creator'
@@ -107,8 +107,9 @@ class App
       puts "something went wrong processing block metadata"
     end
   end
+end
 
-  if INIT then
+if INIT then
     puts "we're creating the cardanospace tiles and uploading them to AWS"
     Creator.download_ipfses_since(60.minutes.ago)
     Creator.generate
@@ -117,13 +118,11 @@ class App
   while UPDATING do
     puts "we're checking for updates"
     begin
-      detect_new_metadata_transactions
+      App.detect_new_metadata_transactions
       puts "updates processed, going to sleep"
       sleep(30)
     rescue
-      puts "something failed in the async metadata loop, trying to reconnect to the database"
-      connect
+      puts "something failed in the async metadata loop"
       sleep(30)
     end
   end
-end

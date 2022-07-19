@@ -22,12 +22,14 @@ To get a mirror running, you will need to deploy 3 separate repositories:
 1. Provision a new server with at least 16GB of ram on a VPS of your choosing - we use https://www.digitalocean.com/
 2. Download this repository to your server
 3. Install ruby 3.0.1 or higher on your server using https://github.com/rbenv/rbenv
-4. Then follow the steps below to initiate your CardanoSpace updating backend
+4. Install libcurl using `sudo apt-get install libcurl4-openssl-dev`
+5. Install vips using `sudo apt install libvips-tools`
+6. Then follow the steps below to initiate your CardanoSpace updating backend
 
 ### Configuring your backend
 1. Configure the BLOCKFROST_API and BLOCKFROST_SUBDOMAIN in `app.rb`
 2. Configure the AWS_KEYS in `app.rb`
-3. Run `bundle`
+3. Run `bundle` inside the `backend` folder
 4. Run `bundle exec rake db:create`
 5. Run `bundle exec rake db:migrate`
 6. Run `bundle exec rake db:seed`
