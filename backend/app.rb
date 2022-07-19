@@ -1,13 +1,20 @@
-require './src/models'
-require 'curb'
-
 args = Hash[ ARGV.join(' ').scan(/--?([^=\s]+)(?:=(\S+))?/) ]
 UPDATING = (args['updating'] == "true" || false)
-
-PRODUCTION = true
-BLOCKFROST_API = PRODUCTION == true ? "" : ""
-BLOCKFROST_SUBDOMAIN = PRODUCTION == true ? "cardano-mainnet" : "cardano-testnet"
+INIT = (args['init'] == "true" || false)
 POLICY_ID = "e3ac0dd93edbe6bafec38fb120cf7c3e223686a97261008c2bfe0d6d"
+BLOCKFROST_SUBDOMAIN = "cardano-mainnet"
+
+BLOCKFROST_API = "" 
+AWS_ACCESS_KEY_ID=""
+AWS_REGION="us-east-1"
+AWS_SECRET_ACCESS_KEY=""
+BUCKET_NAME=""
+
+require './src/models'
+require './src/creator'
+require 'curb'
+
+puts "loading app.rb"
 
 class App
 
@@ -99,6 +106,12 @@ class App
     rescue
       puts "something went wrong processing block metadata"
     end
+  end
+
+  if INIT then
+    puts "we're creating the cardanospace tiles and uploading them to AWS"
+    Creator.download_ipfses_since(60.minutes.ago)
+    Creator.generate
   end
 
   while UPDATING do
