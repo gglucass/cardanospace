@@ -165,12 +165,12 @@ class Creator
     files.each do |f|
       puts "uploading #{f}"
       image_path = f.split("space_files/")[1]
-      S3.put_object(body: File.read(f), bucket: BUCKET_NAME, key: "public/space_files/" + image_path)
+      S3.put_object(body: File.read(f), bucket: ENV['BUCKET_NAME'], key: "public/space_files/" + image_path)
       # faster uploading? https://netdevops.me/2018/uploading-multiple-files-to-aws-s3-in-parallel/
     end
 
     %x(mv #{PATH_BASE}/newspace.dzi #{PATH_BASE}/space.dzi)
-    S3.put_object(body: File.read("#{PATH_BASE}/space.dzi"), bucket: BUCKET_NAME, key: "public/" + "space.dzi")
+    S3.put_object(body: File.read("#{PATH_BASE}/space.dzi"), bucket: ENV['BUCKET_NAME'], key: "public/" + "space.dzi")
 
     sqs = Square.where.not(img: "ipfs://QmegSPCaeSnrnV4R7c4FNFyartRpCzWtm97ETPohmhK9zB").select(:x, :y, :url, :msg, :id, :img, :idx)
     sqs_data = {}
@@ -180,7 +180,7 @@ class Creator
     Zip::File.open("#{PATH_BASE}/destinations.zip", create: true) { |zipfile|
         zipfile.get_output_stream("destinations.json") { |f| f.puts sqs_data.to_json }
       }
-    S3.put_object(body: File.read("#{PATH_BASE}/destinations.zip"), bucket: BUCKET_NAME, key: "public/destinations.zip")
+    S3.put_object(body: File.read("#{PATH_BASE}/destinations.zip"), bucket: ENV['BUCKET_NAME'], key: "public/destinations.zip")
     %x(rm -rf #{PATH_BASE}/newspace_files)
     %x(rm #{PATH_BASE}/destinations.zip)
   end
@@ -193,7 +193,7 @@ class Creator
     Zip::File.open("#{PATH_BASE}/gifs.zip", create: true) { |zipfile|
       zipfile.get_output_stream("gifs.json") { |f| f.puts giflist.to_json }
     }
-    S3.put_object(body: File.read("#{PATH_BASE}/gifs.zip"), bucket: BUCKET_NAME, key: "public/gifs.zip")
+    S3.put_object(body: File.read("#{PATH_BASE}/gifs.zip"), bucket: ENV['BUCKET_NAME'], key: "public/gifs.zip")
     %x(rm #{PATH_BASE}/gifs.zip)
   end
 
@@ -205,7 +205,7 @@ class Creator
     Zip::File.open("#{PATH_BASE}/drawings.zip", create: true) { |zipfile|
       zipfile.get_output_stream("drawings.json") { |f| f.puts drawings_map.to_json }
     }
-    S3.put_object(body: File.read("#{PATH_BASE}/drawings.zip"), bucket: BUCKET_NAME, key: "public/drawings.zip")
+    S3.put_object(body: File.read("#{PATH_BASE}/drawings.zip"), bucket: ENV['BUCKET_NAME'], key: "public/drawings.zip")
     %x(rm #{PATH_BASE}/drawings.zip)
   end
 
@@ -224,7 +224,7 @@ class Creator
       puts "saving smaller space"
       smaller_space.pngsave("#{PATH_BASE}/space.png", strip: true)
       puts "smaller space saved, uploading space"
-      S3.put_object(body: File.read("#{PATH_BASE}/space.png"), bucket: BUCKET_NAME, key: "public/space.png")
+      S3.put_object(body: File.read("#{PATH_BASE}/space.png"), bucket: ENV['BUCKET_NAME'], key: "public/space.png")
       %x(rm #{PATH_BASE}/space.png)
       puts "smaller space uploaded"
     else
