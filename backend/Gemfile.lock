@@ -30,6 +30,7 @@ GEM
       aws-eventstream (~> 1, >= 1.0.2)
     concurrent-ruby (1.1.9)
     curb (0.9.11)
+    dotenv (2.7.6)
     ffi (1.15.4)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
@@ -72,6 +73,7 @@ DEPENDENCIES
   activerecord
   aws-sdk-s3 (~> 1)
   curb
+  dotenv
   ox
   racksh
   rake
