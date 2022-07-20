@@ -4,12 +4,6 @@ INIT = (args['init'] == "true" || false)
 POLICY_ID = "e3ac0dd93edbe6bafec38fb120cf7c3e223686a97261008c2bfe0d6d"
 BLOCKFROST_SUBDOMAIN = "cardano-mainnet"
 
-BLOCKFROST_API = "" 
-AWS_ACCESS_KEY_ID=""
-AWS_REGION="us-east-1"
-AWS_SECRET_ACCESS_KEY="nGeQBqRhOW3WhzBaWNCsAW0Ca89/hcYCBqEfRM93"
-BUCKET_NAME="mycspacebucket"
-
 require './src/models'
 require './src/creator'
 require 'curb'
@@ -21,15 +15,15 @@ class App
   puts "launching the cardanospace app v1"
 
   def self.metadata_txs
-    http = Curl.get("https://#{BLOCKFROST_SUBDOMAIN}.blockfrost.io/api/v0/metadata/txs/labels/909?order=desc&count=5") do |http|
-      http.headers['project_id'] = BLOCKFROST_API
+    http = Curl.get("https://#{ENV['BLOCKFROST_SUBDOMAIN']}.blockfrost.io/api/v0/metadata/txs/labels/909?order=desc&count=5") do |http|
+      http.headers['project_id'] = ENV['BLOCKFROST_API']
     end
     return JSON.parse(http.body)
   end
 
   def self.transaction_utxos(transaction_id)
-    http = Curl.get("https://#{BLOCKFROST_SUBDOMAIN}.blockfrost.io/api/v0/txs/#{transaction_id}/utxos") do |http|
-      http.headers['project_id'] = BLOCKFROST_API
+    http = Curl.get("https://#{ENV['BLOCKFROST_SUBDOMAIN']}.blockfrost.io/api/v0/txs/#{transaction_id}/utxos") do |http|
+      http.headers['project_id'] = ENV['BLOCKFROST_API']
     end
     return JSON.parse(http.body)
   end
