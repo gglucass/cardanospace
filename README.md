@@ -24,7 +24,8 @@ To get a mirror running, you will need to deploy 3 separate repositories:
 3. Install ruby 3.0.1 or higher on your server using https://github.com/rbenv/rbenv
 4. Install libcurl using `sudo apt-get install libcurl4-openssl-dev`
 5. Install vips using `sudo apt install libvips-tools`
-6. Then follow the steps below to initiate your CardanoSpace updating backend
+6. Increase the maximum number of files you can have open by running `ulimit -n 4096`
+7. Then follow the steps below to initiate your CardanoSpace updating backend
 
 ### Configuring your backend
 1. Configure the BLOCKFROST_API and BLOCKFROST_SUBDOMAIN in `app.rb`
@@ -37,7 +38,7 @@ To get a mirror running, you will need to deploy 3 separate repositories:
   1. initiate downloading all the images shown on CardanoSpace.
   2. Create and upload the image tiles that make up CardanoSpace to your AWS S3 bucket
   3. Start a never ending loop that updates your CardanoSpace database
-  4. This will take a very long time to run, as in at least 60 minutes, so go eat a pizza :-)
+  4. This will take a very long time to run, as in at least 3 hours, so go eat a pizza :-)
   5. **Note:** if you run into memory issues here, you may need a beefier server.
 8. `something that runs an actual space creator as part of this --> maybe with a timed loop? or if there actually is a change?`
 9. Check out your newly mirrored CardanoSpace in your bucket

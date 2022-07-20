@@ -187,9 +187,7 @@ class Creator
 
   def self.upload_gifs(drawings)
     giflist = drawings.select { |k,v| v[:traits].include?("Dynamic") }
-    gif_imgs = giflist.map { |key, values| "ipfs://" + values[:image].to_s }
-    small_gifs_ipfses = Square.where(img: gif_imgs).where("img_size < ?", 10000000).pluck(:img)
-    giflist.keep_if { |key, values| values[:image] && small_gifs_ipfses.include?("ipfs://" + values[:image].to_s) }
+    giflist.keep_if { |key, values| values[:image] && File.size("#{PATH_BASE}/images/#{values[:image]}") < 10000000}
 
     puts "uploading gifs zip"
     Zip::File.open("#{PATH_BASE}/gifs.zip", create: true) { |zipfile|
@@ -212,7 +210,7 @@ class Creator
   end
 
   def self.generate
-    squares = Square.where.not(img: "ipfs://QmegSPCaeSnrnV4R7c4FNFyartRpCzWtm97ETPohmhK9zB").select(:idx, :x, :y, :bought, :img, :url, :msg, :img_valid, :img_size, :img_is_gif, :id, :traits, :the_type, :audio, :tdrs)
+    squares = Square.where.not(img: "ipfs://QmegSPCaeSnrnV4R7c4FNFyartRpCzWtm97ETPohmhK9zB").select(:idx, :x, :y, :bought, :img, :url, :msg, :id, :traits, :the_type, :audio, :tdrs)
     images = generate_image_grouping(squares)
     drawings = generate_drawings(images)
     skiplist = validate_images(drawings)
