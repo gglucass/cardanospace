@@ -104,19 +104,22 @@ class App
 end
 
 if INIT then
-    puts "we're creating the cardanospace tiles and uploading them to AWS"
-    Creator.download_ipfses_since(60.minutes.ago)
-    Creator.generate
-  end
+  puts "we're creating the cardanospace tiles and uploading them to AWS"
+  Creator.download_ipfses_since(60.minutes.ago)
+  Creator.generate
+  puts "done generating the files, now going into the normal shell"
+end
 
-  while UPDATING do
-    puts "we're checking for updates"
-    begin
-      App.detect_new_metadata_transactions
-      puts "updates processed, going to sleep"
-      sleep(30)
-    rescue
-      puts "something failed in the async metadata loop"
-      sleep(30)
-    end
+puts "going to check for updating"
+while UPDATING do
+  puts "we're checking for updates"
+  begin
+    App.detect_new_metadata_transactions
+    puts "updates processed, going to sleep"
+    sleep(30)
+  rescue
+    puts "something failed in the async metadata loop"
+    sleep(30)
   end
+end
+puts "updating flag not set!"

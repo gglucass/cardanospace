@@ -183,6 +183,7 @@ class Creator
     S3.put_object(body: File.read("#{PATH_BASE}/destinations.zip"), bucket: ENV['BUCKET_NAME'], key: "public/destinations.zip")
     %x(rm -rf #{PATH_BASE}/newspace_files)
     %x(rm #{PATH_BASE}/destinations.zip)
+    puts "done uploading destinations zip"
   end
 
   def self.upload_gifs(drawings)
