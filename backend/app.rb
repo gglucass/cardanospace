@@ -4,6 +4,8 @@ INIT = (args['init'] == "true" || false)
 POLICY_ID = "e3ac0dd93edbe6bafec38fb120cf7c3e223686a97261008c2bfe0d6d"
 BLOCKFROST_SUBDOMAIN = "cardano-mainnet"
 
+puts "Updating: #{UPDATING}"
+
 require './src/models'
 require './src/creator'
 require 'curb'
