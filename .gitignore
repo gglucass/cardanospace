@@ -1,4 +1,5 @@
 *.DS_Store
 backend/src/images/*
 backend/db/*.db
+backend/db/*.db-journal
 */.env

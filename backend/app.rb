@@ -1,8 +1,7 @@
 args = Hash[ ARGV.join(' ').scan(/--?([^=\s]+)(?:=(\S+))?/) ]
-UPDATING = (args['updating'] == "true" || false)
-INIT = (args['init'] == "true" || false)
+UPDATING = (args['updating'] === "true" || false)
+INIT = (args['init'] === "true" || false)
 POLICY_ID = "e3ac0dd93edbe6bafec38fb120cf7c3e223686a97261008c2bfe0d6d"
-BLOCKFROST_SUBDOMAIN = "cardano-mainnet"
 
 require './src/models'
 require './src/creator'
@@ -29,12 +28,13 @@ class App
   end
 
   def self.detect_new_metadata_transactions
-    last_transactions = metadata_txs
+    last_transactions = self.metadata_txs
     last_transactions.keep_if { |tx| Metadata.where(transaction_id: tx["tx_hash"]).empty? }
+    puts "we've checked metadata"
     last_transactions.each do |transaction|
       puts "processing new upload with tx id: " + transaction["tx_hash"]
       begin
-        new_img = process_sent_metadata(transaction)
+        new_img = self.process_sent_metadata(transaction)
         if new_img then
           Metadata.create(transaction_id: transaction["tx_hash"])
         else
@@ -52,7 +52,7 @@ class App
         puts "starting to process blocklink metadata for #{transaction["tx_hash"]}"
         squares = transaction["json_metadata"]["CardanoSpaces"].length > 1 ? transaction["json_metadata"]["CardanoSpaces"] : transaction["json_metadata"]["CardanoSpaces"][0].split(",")
         square_keys = squares.map { |sk| sk.tr('-', '').gsub('100', '00').gsub(/\d{0}0[0][0]/, "").upcase }
-        utxos = transaction_utxos(transaction["tx_hash"])
+        utxos = self.transaction_utxos(transaction["tx_hash"])
         asset_names = utxos["outputs"][0]["amount"].pluck("unit")
         if asset_names.length > 1 then
           asset_names.delete("lovelace")
@@ -61,7 +61,7 @@ class App
           left_over_keys = square_keys - tx_keys
           transaction["json_metadata"]["CardanoSpaces"] = square_keys - left_over_keys
           transaction["json_metadata"]["CardanoSpaces"] = transaction["json_metadata"]["CardanoSpaces"].map { |sk| sk.gsub(/\d{0}0[0][0]/, "").upcase }
-          new_img = process_block_metadata(transaction)
+          new_img = self.process_block_metadata(transaction)
           return new_img
         elsif asset_names.length <= 2 then
           puts "couldn't find any assets for #{transaction["tx_hash"]} - did this person not attach nfts? Marking as processed."
