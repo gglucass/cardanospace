@@ -4,8 +4,6 @@ INIT = (args['init'] == "true" || false)
 POLICY_ID = "e3ac0dd93edbe6bafec38fb120cf7c3e223686a97261008c2bfe0d6d"
 BLOCKFROST_SUBDOMAIN = "cardano-mainnet"
 
-puts "Updating: #{UPDATING}"
-
 require './src/models'
 require './src/creator'
 require 'curb'
@@ -112,8 +110,9 @@ if INIT then
   puts "done generating the files, now going into the normal shell"
 end
 
-puts "going to check for updating"
-while UPDATING do
+puts "going to check for updating - note that if init is true but updating is false, it will fail after initializing for some reason. I don't know why yet."
+
+while UPDATING
   puts "we're checking for updates"
   begin
     App.detect_new_metadata_transactions
@@ -124,4 +123,4 @@ while UPDATING do
     sleep(30)
   end
 end
-puts "updating flag not set!"
+puts "updating & init flag not set - initiating shell!"
